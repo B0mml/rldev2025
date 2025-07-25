@@ -1,0 +1,95 @@
+require("game.objects.gamemap")
+
+RectangularRoom = Object:extend()
+
+function RectangularRoom:new(x, y, width, height)
+	self.x1 = x
+	self.y1 = y
+	self.x2 = x + width
+	self.y2 = y + height
+end
+
+function RectangularRoom:center()
+	center_x = math.floor((self.x1 + self.x2) / 2)
+	center_y = math.floor((self.y1 + self.y2) / 2)
+
+	return center_x, center_y
+end
+
+function RectangularRoom:inner()
+	return {
+		x1 = self.x1 + 1,
+		x2 = self.x2,
+		y1 = self.y1 + 1,
+		y2 = self.y2,
+	}
+end
+
+function RectangularRoom:intersects(other)
+	return (self.x1 <= other.x2 and self.x2 >= other.x1 and self.y1 <= other.y2 and other.y2 >= other.y1)
+end
+
+local function createRoom(room, tile_type)
+	local tile_type = tile_type or tile_types.floor
+	local inner = room:inner()
+	for x = inner.x1, inner.x2 - 1 do
+		for y = inner.y1, inner.y2 - 1 do
+			dungeon.tiles[y][x] = tile_type
+		end
+	end
+end
+
+local function tunnelBetween(start_x, start_y, end_x, end_y)
+	x1, y1 = start_x, start_y
+	x2, y2 = end_x, end_y
+
+	if engine.math.random() < 0.5 then
+		corner_x, corner_y = x2, y1
+	else
+		corner_x, corner_y = x1, y2
+	end
+
+	engine.math.Bresenham.line(x1, y1, corner_x, corner_y, function(x, y)
+		if dungeon:inbounds(x, y) then dungeon.tiles[y][x] = tile_types.floor end
+		return true
+	end)
+
+	engine.math.Bresenham.line(corner_x, corner_y, x2, y2, function(x, y)
+		if dungeon:inbounds(x, y) then dungeon.tiles[y][x] = tile_types.floor end
+		return true
+	end)
+end
+
+function generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map_height, player)
+	dungeon = GameMap(map_width, map_height)
+
+	rooms = {}
+
+	for i = 1, max_rooms do
+		print(#rooms)
+		room_width = love.math.random(room_min_size, room_max_size)
+		room_height = love.math.random(room_min_size, room_max_size)
+
+		x = love.math.random(1, dungeon.width - room_width - 1)
+		y = love.math.random(1, dungeon.height - room_height - 1)
+
+		new_room = RectangularRoom(x, y, room_width, room_height)
+
+		if M.include(rooms, function(o) return new_room:intersects(o) end) then goto continue end
+
+		createRoom(new_room, tile_types.floor)
+
+		if #rooms == 0 then
+			dungeon.player_start_x, dungeon.player_start_y = new_room:center()
+		else
+			local prev_center_x, prev_center_y = rooms[#rooms]:center()
+			local new_center_x, new_center_y = new_room:center()
+			tunnelBetween(prev_center_x, prev_center_y, new_center_x, new_center_y)
+		end
+
+		table.insert(rooms, new_room)
+		::continue::
+	end
+
+	return dungeon
+end
