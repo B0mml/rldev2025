@@ -30,11 +30,14 @@ function RectangularRoom:intersects(other)
 end
 
 local function createRoom(room, tile_type)
-	local tile_type = tile_type or tile_types.floor
 	local inner = room:inner()
 	for x = inner.x1, inner.x2 - 1 do
 		for y = inner.y1, inner.y2 - 1 do
-			dungeon.tiles[y][x] = tile_type
+			if (x + y) % 2 == 0 then
+				dungeon.tiles[y][x] = tile_types.floor
+			else
+				dungeon.tiles[y][x] = tile_types.floor_alt
+			end
 		end
 	end
 end
@@ -42,7 +45,6 @@ end
 local function tunnelBetween(start_x, start_y, end_x, end_y)
 	x1, y1 = start_x, start_y
 	x2, y2 = end_x, end_y
-
 	if engine.math.random() < 0.5 then
 		corner_x, corner_y = x2, y1
 	else
@@ -50,17 +52,29 @@ local function tunnelBetween(start_x, start_y, end_x, end_y)
 	end
 
 	engine.math.Bresenham.line(x1, y1, corner_x, corner_y, function(x, y)
-		if dungeon:inbounds(x, y) then dungeon.tiles[y][x] = tile_types.floor end
+		if dungeon:inbounds(x, y) then
+			if (x + y) % 2 == 0 then
+				dungeon.tiles[y][x] = tile_types.floor
+			else
+				dungeon.tiles[y][x] = tile_types.floor_alt
+			end
+		end
 		return true
 	end)
 
 	engine.math.Bresenham.line(corner_x, corner_y, x2, y2, function(x, y)
-		if dungeon:inbounds(x, y) then dungeon.tiles[y][x] = tile_types.floor end
+		if dungeon:inbounds(x, y) then
+			if (x + y) % 2 == 0 then
+				dungeon.tiles[y][x] = tile_types.floor
+			else
+				dungeon.tiles[y][x] = tile_types.floor_alt
+			end
+		end
 		return true
 	end)
 end
 
-function generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map_height, player)
+function generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map_height)
 	dungeon = GameMap(map_width, map_height)
 
 	rooms = {}
