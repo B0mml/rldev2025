@@ -3,6 +3,8 @@ Player = GameObject:extend()
 function Player:new(scene, x, y, opts)
 	Player.super.new(self, scene, x, y, opts)
 
+	self.view_radius = self.view_radius or 8
+
 	-- collision
 	self.map = opts.map
 

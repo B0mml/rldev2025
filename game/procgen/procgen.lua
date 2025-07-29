@@ -80,7 +80,6 @@ function generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map
 	rooms = {}
 
 	for i = 1, max_rooms do
-		print(#rooms)
 		room_width = love.math.random(room_min_size, room_max_size)
 		room_height = love.math.random(room_min_size, room_max_size)
 

@@ -5,6 +5,9 @@ function loadTilesets()
 	}
 end
 
+--@param walkable: true if this tile can be walked over
+--@param transparent: true if this tile doesnt block line of sight
+--@param type_name: internal name of the tile
 function tile(walkable, transparent, type_name)
 	return { walkable = walkable, transparent = transparent, type = type_name }
 end

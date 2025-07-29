@@ -1,5 +1,6 @@
 require("engine.core")
 require("tile_types")
+require("globals")
 
 DEBUG = false
 tile_size = 32
