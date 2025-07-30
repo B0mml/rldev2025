@@ -91,7 +91,8 @@ function GameMap:update(dt)
 	for i = #self.entities, 1, -1 do
 		local entity = self.entities[i]
 		if entity.dead then
-			entity:destroy()
+			entity:die()
+			print("aua")
 			table.remove(self.entities, i)
 		else
 			entity:update(dt)

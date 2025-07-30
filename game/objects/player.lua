@@ -92,7 +92,7 @@ function Player:stopMoveRepeat()
 end
 
 function Player:attack(entity)
-	print("Attacked " .. entity.name)
+	entity:die()
 
 	self.scene:handleEnemyTurns()
 end

@@ -30,3 +30,7 @@ function Entity:spawn(gamemap, x, y)
   table.insert(gamemap.entities, clone)
   return clone
 end
+
+function Entity:die()
+  self.dead = true
+end

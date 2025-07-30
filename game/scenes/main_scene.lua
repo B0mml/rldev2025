@@ -1,8 +1,8 @@
 require("game.procgen.procgen")
 MainScene = Scene:extend()
 
-map_width = 64
-map_height = 64
+map_width = 32
+map_height = 32
 
 room_max_size = 10
 room_min_size = 3
@@ -30,6 +30,7 @@ function MainScene:update(dt)
 	local cam_x = math.floor(self.player.vx + tile_size / 2 + gw / 2)
 	local cam_y = math.floor(self.player.vy + tile_size / 2 + gh / 2)
 	self.camera:lookAt(cam_x, cam_y)
+	self.map:update()
 
 	self:updateFOV()
 end

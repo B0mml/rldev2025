@@ -53,7 +53,7 @@ function place_entities(room, dungeon, max_monsters)
 		if not M.include(dungeon.entities, function(e)
 				return e.x == x and e.y == y
 			end) then
-			if engine.math.random() < 0.8 then
+			if engine.math.random() < 0.7 then
 				entity_templates.goblin:spawn(dungeon, x, y)
 			else
 				entity_templates.ogre:spawn(dungeon, x, y)
