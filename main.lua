@@ -1,5 +1,6 @@
 require("engine.core")
 require("tile_types")
+require("game.entitiy_factories")
 require("globals")
 
 DEBUG = false
@@ -18,8 +19,8 @@ function love.load()
 	local scene_files = {}
 	recursiveEnumerate("game/scenes", scene_files)
 	requireFiles(scene_files)
-
 	loadTilesets()
+	entity_templates = LoadEntityTemplates()
 
 	engine.scenes.changeScene("MainScene")
 end

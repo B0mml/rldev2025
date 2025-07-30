@@ -7,11 +7,12 @@ map_height = 64
 room_max_size = 10
 room_min_size = 3
 max_rooms = 10
+max_monsers_per_room = 2
 
 function MainScene:new()
 	MainScene.super.new(self)
 
-	self.map = generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map_height)
+	self.map = generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map_height, max_monsers_per_room)
 	self.player = self:addGameObject(
 		"Player",
 		self.map.player_start_x,
@@ -73,5 +74,11 @@ function MainScene:updateFOV()
 				return true
 			end)
 		end
+	end
+end
+
+function MainScene:handleEnemyTurns()
+	for _, entity in ipairs(self.map.entities) do
+		print(entity.name .. " wonders when it will get to take a real turn.")
 	end
 end

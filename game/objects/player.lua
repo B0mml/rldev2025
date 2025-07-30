@@ -14,44 +14,49 @@ function Player:new(scene, x, y, opts)
 		image = tilesets["rogues"].image,
 		quad = tilesets["rogues"].quads[1],
 	}
+	self.move_repeat_timer = nil
+	self.held_dir = nil
 end
 
 function Player:update(dt)
 	Player.super.update(self, dt)
 
-	self:handleMovement()
+	self:handleMovementInput()
 end
 
 function Player:draw() engine.sprites.drawTile(self.sprite, self.vx, self.vy) end
 
-function Player:handleMovement()
+function Player:handleMovementInput()
 	if self.movement_tween then return end
-	local new_x, new_y = self.x, self.y
 
-	local has_moved = false
+	local directions = {
+		left = { x = -1, y = 0 },
+		right = { x = 1, y = 0 },
+		up = { x = 0, y = -1 },
+		down = { x = 0, y = 1 },
+	}
 
-	if input:down("left") then
-		new_x = self.x - 1
-		has_moved = true
+	for dir, delta in pairs(directions) do
+		if input:pressed(dir) then
+			self.held_direction = dir
+			self:attemptMove(delta.x, delta.y)
+			self:startMoveRepeat(dir, delta)
+			return
+		end
 	end
-	if input:down("right") then
-		new_x = self.x + 1
-		has_moved = true
-	end
-	if input:down("up") then
-		new_y = self.y - 1
-		has_moved = true
-	end
-	if input:down("down") then
-		new_y = self.y + 1
-		has_moved = true
-	end
+end
 
-	if not has_moved then return end
+function Player:attemptMove(dx, dy)
+	local new_x, new_y = self.x + dx, self.y + dy
 
-	local tile = self.map:getTile(new_x, new_y)
-
-	if not tile.walkable then return end
+	local blocked_by = self.map:isBlocked(new_x, new_y)
+	if blocked_by then
+		if type(blocked_by) == "table" and blocked_by.name then
+			self:attack(blocked_by)
+			self:stopMoveRepeat()
+		end
+		return
+	end
 
 	self.x, self.y = new_x, new_y
 
@@ -63,4 +68,31 @@ function Player:handleMovement()
 		"linear",
 		function() self.movement_tween = nil end
 	)
+
+	self.scene:handleEnemyTurns()
+end
+
+function Player:startMoveRepeat(dir, delta)
+	self:stopMoveRepeat()
+
+	self.move_repeat_timer = self.timer:every(0.2, function()
+		if input:down(dir) then
+			self:attemptMove(delta.x, delta.y)
+		else
+			self:stopMoveRepeat()
+		end
+	end)
+end
+
+function Player:stopMoveRepeat()
+	if self.move_repeat_timer then
+		self.timer:cancel(self.move_repeat_timer)
+		self.move_repeat_timer = nil
+	end
+end
+
+function Player:attack(entity)
+	print("Attacked " .. entity.name)
+
+	self.scene:handleEnemyTurns()
 end
