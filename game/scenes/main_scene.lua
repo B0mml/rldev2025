@@ -8,6 +8,7 @@ room_max_size = 10
 room_min_size = 3
 max_rooms = 10
 max_monsers_per_room = 2
+current_monsters = 0
 
 function MainScene:new()
 	MainScene.super.new(self)
@@ -80,6 +81,6 @@ end
 
 function MainScene:handleEnemyTurns()
 	for _, entity in ipairs(self.map.entities) do
-		print(entity.name .. " wonders when it will get to take a real turn.")
+		entity.ai:move_along_path(self.player.x, self.player.y)
 	end
 end

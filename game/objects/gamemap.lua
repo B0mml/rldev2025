@@ -1,4 +1,5 @@
 require("tile_types")
+local Grid = require("engine.libraries.jumper.grid")
 
 GameMap = Object:extend()
 
@@ -9,7 +10,6 @@ function GameMap:new(width, height)
 	self.visible = {}
 	self.explored = {}
 	self.entities = {}
-
 
 	for i = 1, self.height do
 		self.visible[i] = {}
@@ -31,6 +31,13 @@ function GameMap:new(width, height)
 			self.tiles[i][j] = tile_types.wall
 		end
 	end
+
+	self.walkable = 0
+	self.collision_map = {}
+
+	self:update_collision_map()
+
+	self.grid = Grid(self.collision_map)
 end
 
 function GameMap:inbounds(x, y) return x >= 1 and x <= self.width and y >= 1 and y <= self.height end
@@ -47,14 +54,10 @@ end
 
 function GameMap:isBlocked(x, y)
 	local tile = self:getTile(x, y)
-	if not tile.walkable then
-		return true
-	end
+	if not tile.walkable then return true end
 
 	for _, entity in ipairs(self.entities) do
-		if entity.blocks_movement and entity.x == x and entity.y == y then
-			return entity
-		end
+		if entity.blocks_movement and entity.x == x and entity.y == y then return entity end
 	end
 
 	return false
@@ -62,9 +65,7 @@ end
 
 function GameMap:getEntityAt(x, y)
 	for _, entity in ipairs(self.entities) do
-		if entity.x == x and entity.y == y then
-			return entity
-		end
+		if entity.x == x and entity.y == y then return entity end
 	end
 	return nil
 end
@@ -87,17 +88,33 @@ function GameMap:getSprite(tile)
 	}
 end
 
+function GameMap:update_collision_map()
+	for i = 1, self.height do
+		self.collision_map[i] = {}
+		for j = 1, self.width do
+			local tile = self.tiles[i][j]
+			local entity = self:getEntityAt(j, i)
+
+			if tile.walkable and (entity == nil or not entity.blocks_movement) then
+				self.collision_map[i][j] = 0
+			else
+				self.collision_map[i][j] = 1
+			end
+		end
+	end
+end
+
 function GameMap:update(dt)
 	for i = #self.entities, 1, -1 do
 		local entity = self.entities[i]
 		if entity.dead then
 			entity:die()
-			print("aua")
 			table.remove(self.entities, i)
 		else
 			entity:update(dt)
 		end
 	end
+	self:update_collision_map()
 end
 
 function GameMap:draw()
@@ -120,8 +137,6 @@ function GameMap:draw()
 	end
 
 	for _, entity in ipairs(self.entities) do
-		if self.visible[entity.x] and self.visible[entity.x][entity.y] then
-			entity:draw()
-		end
+		if self.visible[entity.x] and self.visible[entity.x][entity.y] then entity:draw() end
 	end
 end

@@ -19,6 +19,11 @@ function love.load()
 	local scene_files = {}
 	recursiveEnumerate("game/scenes", scene_files)
 	requireFiles(scene_files)
+
+	local component_files = {}
+	recursiveEnumerate("game/components", component_files)
+	requireFiles(component_files)
+
 	loadTilesets()
 	entity_templates = LoadEntityTemplates()
 

@@ -42,7 +42,6 @@ local function createRoom(room, tile_type)
 	end
 end
 
-
 function place_entities(room, dungeon, max_monsters)
 	local number_of_monsters = love.math.random(0, max_monsters)
 
@@ -50,14 +49,16 @@ function place_entities(room, dungeon, max_monsters)
 		x = love.math.random(room.x1 + 1, room.x2 - 1)
 		y = love.math.random(room.y1 + 1, room.y2 - 1)
 
-		if not M.include(dungeon.entities, function(e)
-				return e.x == x and e.y == y
-			end) then
+		if DEBUG then
+			if current_monsters >= 1 then return end
+		end
+		if not M.include(dungeon.entities, function(e) return e.x == x and e.y == y end) then
 			if engine.math.random() < 0.7 then
 				entity_templates.goblin:spawn(dungeon, x, y)
 			else
 				entity_templates.ogre:spawn(dungeon, x, y)
 			end
+			current_monsters = current_monsters + 1
 		end
 	end
 end
