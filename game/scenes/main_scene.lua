@@ -1,5 +1,6 @@
 require("game.procgen.procgen")
 require("game.ui.render_bar")
+require("game.ui.message_log")
 MainScene = Scene:extend()
 
 map_width = 32
@@ -30,6 +31,8 @@ function MainScene:new()
 		max = self.player.fighter_component.max_hp,
 		current = self.player.fighter_component.current_hp,
 	})
+
+	self.message_log = MessageLog()
 
 	local cam_x = math.floor(self.player.vx + tile_size / 2 + gw / 2)
 	local cam_y = math.floor(self.player.vy + tile_size / 2 + gh / 2)
@@ -62,6 +65,7 @@ function MainScene:draw()
 	self.camera:detach()
 
 	if self.hp_bar then self.hp_bar:draw() end
+	if self.message_log then self.message_log:draw() end
 
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)
