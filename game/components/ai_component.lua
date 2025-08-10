@@ -1,4 +1,5 @@
 local Pathfinder = require("engine.libraries.jumper.pathfinder")
+local Heuristics = require("engine.libraries.jumper.core.heuristics")
 
 AiComponent = Object:extend()
 
@@ -27,9 +28,17 @@ function AiComponent:move_along_path(target_x, target_y)
 	if path_coords and #path_coords > 1 then
 		local next_step = path_coords[2]
 
+		if self:get_distance_to(target_x, target_y) <= 1 then return end
 		self.entity:move_to(next_step.x, next_step.y)
 		return true
 	end
 
 	return false
+end
+
+function AiComponent:get_distance_to(target_x, target_y)
+	local dx = target_x - self.entity.x
+	local dy = target_y - self.entity.y
+
+	return Heuristics.DIAGONAL(dx, dy)
 end
