@@ -1,4 +1,5 @@
 require("game.procgen.procgen")
+require("game.ui.render_bar")
 MainScene = Scene:extend()
 
 map_width = 32
@@ -22,6 +23,14 @@ function MainScene:new()
 	)
 	self.map:addPlayer(self.player)
 
+	self.hp_bar = self:addGameObject("RenderBar", 10, 10, {
+		total_width = 200,
+		total_height = 20,
+		min = 0,
+		max = self.player.fighter_component.max_hp,
+		current = self.player.fighter_component.current_hp,
+	})
+
 	local cam_x = math.floor(self.player.vx + tile_size / 2 + gw / 2)
 	local cam_y = math.floor(self.player.vy + tile_size / 2 + gh / 2)
 	self.camera = Camera(cam_x, cam_y)
@@ -34,6 +43,10 @@ function MainScene:update(dt)
 	self.camera:lookAt(cam_x, cam_y)
 	self.map:update()
 
+	if self.hp_bar and self.player.fighter_component then
+		self.hp_bar:ChangeValue(self.player.fighter_component.current_hp)
+	end
+
 	self:updateFOV()
 end
 
@@ -43,8 +56,12 @@ function MainScene:draw()
 
 	self.camera:attach()
 	self.map:draw()
-	MainScene.super.draw(self)
+	for _, object in ipairs(self.game_objects) do
+		if object.draw and object ~= self.hp_bar then object:draw() end
+	end
 	self.camera:detach()
+
+	if self.hp_bar then self.hp_bar:draw() end
 
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)

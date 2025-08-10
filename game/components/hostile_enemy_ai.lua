@@ -3,6 +3,7 @@ HostileEnemyAI = AiComponent:extend()
 function HostileEnemyAI:new(entity) HostileEnemyAI.super.new(self, entity) end
 
 function HostileEnemyAI:perform()
+	if self.entity.fighter_component.current_hp <= 0 then return end
 	local player = self.entity.gamemap.player or nil
 	if player == nil then return end
 	local visible = self.entity.gamemap.visible[self.entity.x][self.entity.y]
