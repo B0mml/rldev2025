@@ -1,9 +1,11 @@
 Entity = GameObject:extend()
 
-function Entity:new(scene, x, y, sprite, name, blocks_movement, max_hp, attack, defense, gamemap, opts)
+function Entity:new(scene, x, y, sprite, name, blocks_movement, ai_type, max_hp, attack, defense, gamemap, opts)
 	Entity.super.new(self, scene, x, y, opts)
 
-	self.ai = AiComponent(self)
+	self.ai_type = ai_type
+	self.ai = self.ai_type(self)
+
 	self.fighter_component = FighterComponent(self, max_hp, attack, defense)
 	self.x = x or 0
 	self.y = y or 0
@@ -30,6 +32,7 @@ function Entity:spawn(gamemap, x, y)
 		self.sprite,
 		self.name,
 		self.blocks_movement,
+		self.ai_type,
 		self.fighter_component.max_hp,
 		self.fighter_component.attack,
 		self.fighter_component.defense,
