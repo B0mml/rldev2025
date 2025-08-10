@@ -57,4 +57,7 @@ function Entity:move_to(new_x, new_y)
 	return false
 end
 
-function Entity:die() self.dead = true end
+function Entity:die()
+	self.dead = true
+	entity_templates.corpse:spawn(self.gamemap, self.x, self.y)
+end

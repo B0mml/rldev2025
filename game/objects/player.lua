@@ -99,4 +99,8 @@ function Player:attack(entity)
 	self.scene:handleEnemyTurns()
 end
 
-function Player:die() self.dead = true end
+function Player:die()
+	print("death")
+	self.dead = true
+	entity_templates.corpse:spawn(self.map, self.x, self.y)
+end

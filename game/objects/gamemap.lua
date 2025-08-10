@@ -40,6 +40,8 @@ function GameMap:new(width, height)
 	self.grid = Grid(self.collision_map)
 end
 
+function GameMap:addPlayer(player) self.player = player end
+
 function GameMap:inbounds(x, y) return x >= 1 and x <= self.width and y >= 1 and y <= self.height end
 
 function GameMap:getTile(x, y)

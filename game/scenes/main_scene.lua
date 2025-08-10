@@ -20,6 +20,7 @@ function MainScene:new()
 		self.map.player_start_y,
 		{ map = self.map, view_radius = 4 }
 	)
+	self.map:addPlayer(self.player)
 
 	local cam_x = math.floor(self.player.vx + tile_size / 2 + gw / 2)
 	local cam_y = math.floor(self.player.vy + tile_size / 2 + gh / 2)
@@ -81,6 +82,6 @@ end
 
 function MainScene:handleEnemyTurns()
 	for _, entity in ipairs(self.map.entities) do
-		entity.ai:move_along_path(self.player.x, self.player.y)
+		entity.ai:perform(self.player.x, self.player.y)
 	end
 end

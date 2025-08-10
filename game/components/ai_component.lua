@@ -6,6 +6,7 @@ AiComponent = Object:extend()
 function AiComponent:new(entity) self.entity = entity end
 
 -- TODO: perform()
+function AiComponent:perform() return end
 
 function AiComponent:get_path_to(end_x, end_y)
 	local myFinder = Pathfinder(self.entity.gamemap.grid, "ASTAR", self.entity.gamemap.walkable)
@@ -28,7 +29,6 @@ function AiComponent:move_along_path(target_x, target_y)
 	if path_coords and #path_coords > 1 then
 		local next_step = path_coords[2]
 
-		if self:get_distance_to(target_x, target_y) <= 1 then return end
 		self.entity:move_to(next_step.x, next_step.y)
 		return true
 	end

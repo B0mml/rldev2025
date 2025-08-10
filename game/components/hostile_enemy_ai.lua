@@ -2,4 +2,20 @@ HostileEnemyAI = AiComponent:extend()
 
 function HostileEnemyAI:new(entity) HostileEnemyAI.super.new(self, entity) end
 
-function HostileEnemyAI:perform(target_x, target_y) self:move_along_path(target_x, target_y) end
+function HostileEnemyAI:perform()
+	local player = self.entity.gamemap.player or nil
+	if player == nil then return end
+	local visible = self.entity.gamemap.visible[self.entity.x][self.entity.y]
+	if not visible then
+		if DEBUG then print("not visible") end
+		return
+	end
+
+	if self:get_distance_to(player.x, player.y) <= 1 then
+		self:attack(player)
+		return
+	end
+	self:move_along_path(player.x, player.y)
+end
+
+function HostileEnemyAI:attack(target) target.fighter_component:damage(self.entity.fighter_component.attack) end

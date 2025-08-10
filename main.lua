@@ -3,7 +3,7 @@ require("tile_types")
 require("game.entitiy_factories")
 require("globals")
 
-DEBUG = false
+DEBUG = true
 tile_size = 32
 
 function love.load()

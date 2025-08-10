@@ -23,6 +23,6 @@ end
 
 function GameObject:draw() end
 
-function GameObject:destroy() self.timer:destroy() end
+function GameObject:destroy() self.timer:clear() end
 
 return GameObject
