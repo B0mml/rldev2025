@@ -1,9 +1,10 @@
 Entity = GameObject:extend()
 
-function Entity:new(scene, x, y, sprite, name, blocks_movement, gamemap, opts)
+function Entity:new(scene, x, y, sprite, name, blocks_movement, max_hp, attack, defense, gamemap, opts)
 	Entity.super.new(self, scene, x, y, opts)
 
 	self.ai = AiComponent(self)
+	self.fighter_component = FighterComponent(self, max_hp, attack, defense)
 	self.x = x or 0
 	self.y = y or 0
 	self.sprite = sprite or {
@@ -22,7 +23,18 @@ function Entity:update(dt) Entity.super.update(self, dt) end
 function Entity:draw() engine.sprites.drawTile(self.sprite, self.vx, self.vy) end
 
 function Entity:spawn(gamemap, x, y)
-	local clone = Entity(self.scene, x, y, self.sprite, self.name, self.blocks_movement, gamemap)
+	local clone = Entity(
+		self.scene,
+		x,
+		y,
+		self.sprite,
+		self.name,
+		self.blocks_movement,
+		self.fighter_component.max_hp,
+		self.fighter_component.attack,
+		self.fighter_component.defense,
+		gamemap
+	)
 
 	clone.id = engine.utils.UUID()
 	clone.creation_time = love.timer:getTime()
@@ -32,7 +44,6 @@ function Entity:spawn(gamemap, x, y)
 end
 
 function Entity:move_to(new_x, new_y)
-	print("move")
 	if self.gamemap and not self.gamemap:isBlocked(new_x, new_y) then
 		self.x = new_x
 		self.y = new_y

@@ -3,6 +3,7 @@ Player = GameObject:extend()
 function Player:new(scene, x, y, opts)
 	Player.super.new(self, scene, x, y, opts)
 
+	self.fighter_component = FighterComponent(self, 10, 1, 0)
 	self.view_radius = self.view_radius or 8
 
 	-- collision
@@ -92,7 +93,10 @@ function Player:stopMoveRepeat()
 end
 
 function Player:attack(entity)
-	entity:die()
+	entity.fighter_component:damage(self.fighter_component.attack)
+	print(entity.fighter_component.current_hp)
 
 	self.scene:handleEnemyTurns()
 end
+
+function Player:die() self.dead = true end
