@@ -95,6 +95,8 @@ end
 function Player:attack(entity)
 	entity.fighter_component:damage(self.fighter_component.attack)
 	print(entity.fighter_component.current_hp)
+	message_log:addMessage("You hit " .. entity.name .. " for " .. self.fighter_component.attack .. " damage!"
+)
 
 	self.scene:handleEnemyTurns()
 end

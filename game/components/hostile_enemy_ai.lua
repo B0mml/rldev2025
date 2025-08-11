@@ -19,4 +19,11 @@ function HostileEnemyAI:perform()
 	self:move_along_path(player.x, player.y)
 end
 
-function HostileEnemyAI:attack(target) target.fighter_component:damage(self.entity.fighter_component.attack) end
+function HostileEnemyAI:attack(target)
+	target.fighter_component:damage(self.entity.fighter_component.attack)
+
+	message_log:addMessage(
+		self.entity.name .. " hit you for " .. self.entity.fighter_component.attack .. " damage!",
+		hp_bar_fg
+	)
+end

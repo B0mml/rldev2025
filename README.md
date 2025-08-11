@@ -5,6 +5,7 @@ This is my repository for [/r/roguelikedev's annual Tutorial Tuesday](https://ww
 ## Art Assets
 
 - Sprites: [32 Rogues](https://sethbb.itch.io/32rogues) by Seth Benton
+- Font:[m3x6](https://managore.itch.io/m3x6) by Daniel Linssen
 
 ## Acknowledgements
 

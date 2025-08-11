@@ -3,12 +3,12 @@ require("game.ui.render_bar")
 require("game.ui.message_log")
 MainScene = Scene:extend()
 
-map_width = 32
-map_height = 32
+map_width = 64
+map_height = 64
 
 room_max_size = 10
 room_min_size = 3
-max_rooms = 10
+max_rooms = 20
 max_monsers_per_room = 2
 current_monsters = 0
 
@@ -32,7 +32,8 @@ function MainScene:new()
 		current = self.player.fighter_component.current_hp,
 	})
 
-	self.message_log = MessageLog()
+	message_log = MessageLog()
+	message_log:addMessage("Welcome to the Dungeon", { 0, 1, 0, 1 })
 
 	local cam_x = math.floor(self.player.vx + tile_size / 2 + gw / 2)
 	local cam_y = math.floor(self.player.vy + tile_size / 2 + gh / 2)
@@ -65,7 +66,7 @@ function MainScene:draw()
 	self.camera:detach()
 
 	if self.hp_bar then self.hp_bar:draw() end
-	if self.message_log then self.message_log:draw() end
+	if message_log then message_log:draw() end
 
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)

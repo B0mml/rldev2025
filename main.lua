@@ -3,7 +3,7 @@ require("tile_types")
 require("game.entitiy_factories")
 require("globals")
 
-DEBUG = true
+DEBUG = false
 tile_size = 32
 
 function love.load()
@@ -26,6 +26,9 @@ function love.load()
 
 	loadTilesets()
 	entity_templates = LoadEntityTemplates()
+
+	font = love.graphics.newFont("game/assets/m3x6.ttf", 16)
+	love.graphics.setFont(font)
 
 	engine.scenes.changeScene("MainScene")
 end
