@@ -5,7 +5,7 @@ input = Input.new({
 		up = { "key:up", "key:w", "key:k", "axis:lefty-", "button:dpup" },
 		down = { "key:down", "key:s", "key:j", "axis:lefty+", "button:dpdown" },
 		action = { "key:x", "button:a" },
-		log = { "key:tab" },
+		log = { "key:v" },
 	},
 	pairs = {
 		move = { "left", "right", "up", "down" },
