@@ -32,6 +32,11 @@ function Player:handleMovementInput()
 	if self.frozen then return end
 	if self.movement_tween then return end
 
+	if input:pressed("skip_turn") then
+		self.scene:handleEnemyTurns()
+		return
+	end
+
 	local directions = {
 		left = { x = -1, y = 0 },
 		right = { x = 1, y = 0 },

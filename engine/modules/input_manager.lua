@@ -6,6 +6,7 @@ input = Input.new({
 		down = { "key:down", "key:s", "key:j", "axis:lefty+", "button:dpdown" },
 		action = { "key:x", "button:a" },
 		log = { "key:v" },
+		skip_turn = { "key:space" },
 	},
 	pairs = {
 		move = { "left", "right", "up", "down" },

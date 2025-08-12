@@ -1,6 +1,6 @@
 require("engine.core")
 require("tile_types")
-require("game.entitiy_factories")
+require("game.entity_factories")
 require("globals")
 
 DEBUG = false
