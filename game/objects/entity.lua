@@ -58,6 +58,8 @@ function Entity:move_to(new_x, new_y)
 end
 
 function Entity:die()
+	message_log:addMessage(self.name .. " Died! ", hp_bar_fg)
 	self.dead = true
-	entity_templates.corpse:spawn(self.gamemap, self.x, self.y)
+	local corpse = entity_templates.corpse:spawn(self.gamemap, self.x, self.y)
+	corpse.name = "Remains of " .. self.name
 end

@@ -65,11 +65,12 @@ function GameMap:isBlocked(x, y)
 	return false
 end
 
-function GameMap:getEntityAt(x, y)
+function GameMap:getEntitiesAt(x, y)
+	local entities = {}
 	for _, entity in ipairs(self.entities) do
-		if entity.x == x and entity.y == y then return entity end
+		if entity.x == x and entity.y == y then table.insert(entities, entity) end
 	end
-	return nil
+	return entities
 end
 
 function GameMap:getSprite(tile)
@@ -95,7 +96,7 @@ function GameMap:update_collision_map()
 		self.collision_map[i] = {}
 		for j = 1, self.width do
 			local tile = self.tiles[i][j]
-			local entity = self:getEntityAt(j, i)
+			local entity = self:getEntitiesAt(j, i)[1]
 
 			if tile.walkable and (entity == nil or not entity.blocks_movement) then
 				self.collision_map[i][j] = 0
@@ -110,7 +111,6 @@ function GameMap:update(dt)
 	for i = #self.entities, 1, -1 do
 		local entity = self.entities[i]
 		if entity.dead then
-			entity:die()
 			table.remove(self.entities, i)
 		else
 			entity:update(dt)

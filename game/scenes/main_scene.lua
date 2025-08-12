@@ -1,6 +1,8 @@
 require("game.procgen.procgen")
 require("game.ui.render_bar")
 require("game.ui.message_log")
+require("game.ui.mouse_hover")
+require("game.mouse")
 MainScene = Scene:extend()
 
 map_width = 64
@@ -33,9 +35,11 @@ function MainScene:new()
 	})
 
 	message_log = MessageLog()
-	for i = 1, 100 do
-		message_log:addMessage("Welcome to the Dungeon" .. i, { 0, 1, 0, 1 })
-	end
+	message_log:addMessage("Welcome to the Dungeon", { 0, 1, 0, 1 })
+
+	mouse = Mouse()
+	self.hovered_entities = {}
+	self.mouse_hover = MouseHover()
 
 	local cam_x = math.floor(self.player.vx + tile_size / 2 + gw / 2)
 	local cam_y = math.floor(self.player.vy + tile_size / 2 + gh / 2)
@@ -63,15 +67,39 @@ function MainScene:update(dt)
 	end
 	if message_log.expanded then
 		if input:pressed("down") then
-			message_log:scroll(-3)
+			message_log:scroll(-1)
 		elseif input:pressed("up") then
-			message_log:scroll(3)
+			message_log:scroll(1)
 		end
+	end
+
+	local entities = mouse:getEntities(self.camera, self.map)
+	local tile_x, tile_y = mouse:getTile(self.camera)
+
+	local is_visible = false
+	if self.map:inbounds(tile_x, tile_y) and self.map.visible[tile_x] and self.map.visible[tile_x][tile_y] then
+		is_visible = true
+	end
+
+	if is_visible then
+		self.mouse_hover:update(entities, tile_x, tile_y, self.camera)
+	else
+		self.mouse_hover:update({}, tile_x, tile_y, self.camera)
 	end
 end
 
+function MainScene:entitiesEqual(entities1, entities2)
+	if not entities1 or not entities2 then return false end
+	if #entities1 ~= #entities2 then return false end
+
+	for i, entity in ipairs(entities1) do
+		if entity ~= entities2[i] then return false end
+	end
+	return true
+end
+
 function love.wheelmoved(x, y)
-	if message_log.expanded then message_log:scroll(y * 3) end
+	if message_log.expanded then message_log:scroll(y * 1) end
 end
 
 function MainScene:draw()
@@ -87,6 +115,7 @@ function MainScene:draw()
 
 	if self.hp_bar then self.hp_bar:draw() end
 	if message_log then message_log:draw() end
+	if self.mouse_hover then self.mouse_hover:draw() end
 
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)

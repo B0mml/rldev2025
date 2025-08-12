@@ -20,10 +20,9 @@ function HostileEnemyAI:perform()
 end
 
 function HostileEnemyAI:attack(target)
-	target.fighter_component:damage(self.entity.fighter_component.attack)
-
 	message_log:addMessage(
 		self.entity.name .. " hit you for " .. self.entity.fighter_component.attack .. " damage!",
 		hp_bar_fg
 	)
+	target.fighter_component:damage(self.entity.fighter_component.attack)
 end

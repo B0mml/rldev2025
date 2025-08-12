@@ -95,15 +95,15 @@ function Player:stopMoveRepeat()
 end
 
 function Player:attack(entity)
-	entity.fighter_component:damage(self.fighter_component.attack)
-	print(entity.fighter_component.current_hp)
 	message_log:addMessage("You hit " .. entity.name .. " for " .. self.fighter_component.attack .. " damage!")
+	entity.fighter_component:damage(self.fighter_component.attack)
 
 	self.scene:handleEnemyTurns()
 end
 
 function Player:die()
-	print("death")
+	message_log:addMessage("You Died! ", hp_bar_fg)
 	self.dead = true
-	entity_templates.corpse:spawn(self.map, self.x, self.y)
+	local corpse = entity_templates.corpse:spawn(self.map, self.x, self.y)
+	corpse.name = "Your Remains"
 end
