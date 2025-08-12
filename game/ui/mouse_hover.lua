@@ -13,7 +13,11 @@ function MouseHover:new()
 	self.font = love.graphics.getFont()
 end
 
-function MouseHover:update(entities, tile_x, tile_y, camera)
+function MouseHover:update(entities, tile_x, tile_y, camera, player_x, player_y)
+	if message_log and message_log.expanded then
+		self.visible = false
+		return
+	end
 	if #entities > 0 then
 		self.visible = true
 		self.entities = entities
@@ -21,9 +25,6 @@ function MouseHover:update(entities, tile_x, tile_y, camera)
 		local world_x = tile_x * tile_size
 		local world_y = tile_y * tile_size
 		local screen_x, screen_y = camera:cameraCoords(world_x, world_y)
-
-		self.x = screen_x + tile_size + 5
-		self.y = screen_y
 
 		local max_width = 0
 		for _, entity in ipairs(entities) do
@@ -33,6 +34,13 @@ function MouseHover:update(entities, tile_x, tile_y, camera)
 
 		self.width = max_width + (self.padding * 2)
 		self.height = (#entities * self.line_height) + (self.padding * 2)
+
+		if player_x and player_y and player_x <= tile_x then
+			self.x = screen_x + tile_size + 5
+		else
+			self.x = screen_x - self.width - 5
+		end
+		self.y = screen_y
 
 		if self.x + self.width > gw then self.x = screen_x - self.width - 5 end
 		if self.y + self.height > gh then self.y = gh - self.height end
@@ -65,4 +73,3 @@ function MouseHover:draw()
 
 	love.graphics.setColor(default_color)
 end
-

@@ -8,8 +8,8 @@ MainScene = Scene:extend()
 map_width = 64
 map_height = 64
 
-room_max_size = 10
-room_min_size = 3
+room_max_size = 12
+room_min_size = 4
 max_rooms = 20
 max_monsers_per_room = 2
 current_monsters = 0
@@ -81,11 +81,7 @@ function MainScene:update(dt)
 		is_visible = true
 	end
 
-	if is_visible then
-		self.mouse_hover:update(entities, tile_x, tile_y, self.camera)
-	else
-		self.mouse_hover:update({}, tile_x, tile_y, self.camera)
-	end
+	if is_visible then self.mouse_hover:update(entities, tile_x, tile_y, self.camera, self.player.x, self.player.y) end
 end
 
 function MainScene:entitiesEqual(entities1, entities2)
