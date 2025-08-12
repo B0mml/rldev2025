@@ -5,6 +5,7 @@ function Player:new(scene, x, y, opts)
 
 	self.fighter_component = FighterComponent(self, 10, 1, 0)
 	self.view_radius = self.view_radius or 8
+	self.frozen = false
 
 	-- collision
 	self.map = opts.map
@@ -28,6 +29,7 @@ end
 function Player:draw() engine.sprites.drawTile(self.sprite, self.vx, self.vy) end
 
 function Player:handleMovementInput()
+	if self.frozen then return end
 	if self.movement_tween then return end
 
 	local directions = {
@@ -95,8 +97,7 @@ end
 function Player:attack(entity)
 	entity.fighter_component:damage(self.fighter_component.attack)
 	print(entity.fighter_component.current_hp)
-	message_log:addMessage("You hit " .. entity.name .. " for " .. self.fighter_component.attack .. " damage!"
-)
+	message_log:addMessage("You hit " .. entity.name .. " for " .. self.fighter_component.attack .. " damage!")
 
 	self.scene:handleEnemyTurns()
 end

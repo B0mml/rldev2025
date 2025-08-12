@@ -33,7 +33,9 @@ function MainScene:new()
 	})
 
 	message_log = MessageLog()
-	message_log:addMessage("Welcome to the Dungeon", { 0, 1, 0, 1 })
+	for i = 1, 100 do
+		message_log:addMessage("Welcome to the Dungeon" .. i, { 0, 1, 0, 1 })
+	end
 
 	local cam_x = math.floor(self.player.vx + tile_size / 2 + gw / 2)
 	local cam_y = math.floor(self.player.vy + tile_size / 2 + gh / 2)
@@ -52,6 +54,24 @@ function MainScene:update(dt)
 	end
 
 	self:updateFOV()
+
+	if input:pressed("log") then
+		message_log.expanded = not message_log.expanded
+		self.player.frozen = not self.player.frozen
+
+		if not message_log.expanded then message_log:scrollToBottom() end
+	end
+	if message_log.expanded then
+		if input:pressed("down") then
+			message_log:scroll(-3)
+		elseif input:pressed("up") then
+			message_log:scroll(3)
+		end
+	end
+end
+
+function love.wheelmoved(x, y)
+	if message_log.expanded then message_log:scroll(y * 3) end
 end
 
 function MainScene:draw()
