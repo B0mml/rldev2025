@@ -4,6 +4,7 @@ function Player:new(scene, x, y, opts)
 	Player.super.new(self, scene, x, y, opts)
 
 	self.fighter_component = FighterComponent(self, 10, 1, 0)
+	self.inventory_component = InventoryComponent(10)
 	self.view_radius = self.view_radius or 8
 	self.frozen = false
 
@@ -32,8 +33,43 @@ function Player:handleMovementInput()
 	if self.frozen then return end
 	if self.movement_tween then return end
 
+	if inventory_ui and inventory_ui.visible then
+		if input:pressed("up") then
+			inventory_ui:handleInput("up")
+			return
+		end
+		if input:pressed("down") then
+			inventory_ui:handleInput("down")
+			return
+		end
+		if input:pressed("action") then
+			inventory_ui:handleInput("return")
+			return
+		end
+		if input:pressed("pickup") then
+			inventory_ui:handleInput("x")
+			return
+		end
+		if input:pressed("inventory") then
+			inventory_ui:handleInput("i")
+			return
+		end
+		return
+	end
+
+	if input:pressed("pickup") then
+		local items_on_tile = self:getItemsOnTile()
+		if #items_on_tile > 0 then self:pickupItems() end
+		return
+	end
+
 	if input:pressed("skip_turn") then
 		self.scene:handleEnemyTurns()
+		return
+	end
+
+	if input:pressed("inventory") then
+		if inventory_ui then inventory_ui:toggle() end
 		return
 	end
 
@@ -111,4 +147,36 @@ function Player:die()
 	self.dead = true
 	local corpse = entity_templates.corpse:spawn(self.map, self.x, self.y)
 	corpse.name = "Your Remains"
+end
+
+function Player:getItemsOnTile()
+	if not self.map or not self.map.entities then return {} end
+
+	local items = {}
+	for _, entity in ipairs(self.map.entities) do
+		if entity.x == self.x and entity.y == self.y then
+			if entity.tags and M.include(entity.tags, "item") then table.insert(items, entity) end
+		end
+	end
+	return items
+end
+
+function Player:pickupItems()
+	if not self.map or not self.map.entities then return end
+
+	local items_picked_up = {}
+	for i = #self.map.entities, 1, -1 do
+		local entity = self.map.entities[i]
+		if entity.x == self.x and entity.y == self.y and entity.tags and M.include(entity.tags, "item") then
+			table.insert(self.inventory_component.items, entity)
+			table.insert(items_picked_up, entity.name)
+			table.remove(self.map.entities, i)
+		end
+	end
+
+	if #items_picked_up > 0 then
+		for _, item_name in ipairs(items_picked_up) do
+			message_log:addMessage("Picked up " .. item_name)
+		end
+	end
 end

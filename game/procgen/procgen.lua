@@ -42,8 +42,9 @@ local function createRoom(room, tile_type)
 	end
 end
 
-function place_entities(room, dungeon, max_monsters)
+function place_entities(room, dungeon, max_monsters, max_items)
 	local number_of_monsters = love.math.random(0, max_monsters)
+	local number_of_items = love.math.random(0, max_items)
 
 	for i = 1, number_of_monsters do
 		x = love.math.random(room.x1 + 1, room.x2 - 1)
@@ -59,6 +60,15 @@ function place_entities(room, dungeon, max_monsters)
 				entity_templates.ogre:spawn(dungeon, x, y)
 			end
 			current_monsters = current_monsters + 1
+		end
+	end
+
+	for i = 1, number_of_items do
+		x = love.math.random(room.x1 + 1, room.x2 - 1)
+		y = love.math.random(room.y1 + 1, room.y2 - 1)
+
+		if not M.include(dungeon.entities, function(e) return e.x == x and e.y == y end) then
+			entity_templates.health_potion:spawn(dungeon, x, y)
 		end
 	end
 end
@@ -95,7 +105,15 @@ local function tunnelBetween(start_x, start_y, end_x, end_y)
 	end)
 end
 
-function generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map_height, max_monsters_per_room)
+function generateDungeon(
+	max_rooms,
+	room_min_size,
+	room_max_size,
+	map_width,
+	map_height,
+	max_monsters_per_room,
+	max_items_per_room
+)
 	dungeon = GameMap(map_width, map_height)
 
 	rooms = {}
@@ -120,7 +138,7 @@ function generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map
 			local new_center_x, new_center_y = new_room:center()
 			tunnelBetween(prev_center_x, prev_center_y, new_center_x, new_center_y)
 		end
-		place_entities(new_room, dungeon, max_monsters_per_room)
+		place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
 
 		table.insert(rooms, new_room)
 		::continue::

@@ -1,12 +1,8 @@
 Entity = GameObject:extend()
 
-function Entity:new(scene, x, y, sprite, name, blocks_movement, ai_type, max_hp, attack, defense, gamemap, opts)
+function Entity:new(scene, x, y, sprite, name, blocks_movement, gamemap, components, tags, opts)
 	Entity.super.new(self, scene, x, y, opts)
 
-	self.ai_type = ai_type
-	self.ai = self.ai_type(self)
-
-	self.fighter_component = FighterComponent(self, max_hp, attack, defense)
 	self.x = x or 0
 	self.y = y or 0
 	self.sprite = sprite or {
@@ -18,6 +14,28 @@ function Entity:new(scene, x, y, sprite, name, blocks_movement, ai_type, max_hp,
 	self.gamemap = gamemap
 
 	self.vx, self.vy = self.x * tile_size, self.y * tile_size
+
+	self.tags = tags or {}
+
+	if components then
+		for component_name, component_data in pairs(components) do
+			if component_name == "ai" then
+				self.ai_type = component_data.type
+				if self.ai_type then self.ai = self.ai_type(self) end
+			elseif component_name == "fighter" then
+				self.fighter_component =
+					FighterComponent(self, component_data.max_hp, component_data.attack, component_data.defense)
+			elseif component_name == "consumable" then
+				self.consumable = component_data.type(self)
+			else
+				if type(component_data) == "table" and component_data.type then
+					self[component_name .. "_component"] = component_data.type(self)
+				elseif type(component_data) == "function" then
+					self[component_name .. "_component"] = component_data(self)
+				end
+			end
+		end
+	end
 end
 
 function Entity:update(dt) Entity.super.update(self, dt) end
@@ -25,19 +43,21 @@ function Entity:update(dt) Entity.super.update(self, dt) end
 function Entity:draw() engine.sprites.drawTile(self.sprite, self.vx, self.vy) end
 
 function Entity:spawn(gamemap, x, y)
-	local clone = Entity(
-		self.scene,
-		x,
-		y,
-		self.sprite,
-		self.name,
-		self.blocks_movement,
-		self.ai_type,
-		self.fighter_component.max_hp,
-		self.fighter_component.attack,
-		self.fighter_component.defense,
-		gamemap
-	)
+	local components = {}
+
+	if self.ai_type then components.ai = { type = self.ai_type } end
+
+	if self.fighter_component then
+		components.fighter = {
+			max_hp = self.fighter_component.max_hp,
+			attack = self.fighter_component.attack,
+			defense = self.fighter_component.defense,
+		}
+	end
+
+	if self.consumable then components.consumable = { type = getmetatable(self.consumable) } end
+
+	local clone = Entity(self.scene, x, y, self.sprite, self.name, self.blocks_movement, gamemap, components, self.tags)
 
 	clone.id = engine.utils.UUID()
 	clone.creation_time = love.timer:getTime()

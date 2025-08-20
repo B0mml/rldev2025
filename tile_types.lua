@@ -3,6 +3,7 @@ function loadTilesets()
 		["rogues"] = engine.sprites.createTileset("game/assets/rogues.png", tile_size, tile_size),
 		["tiles"] = engine.sprites.createTileset("game/assets/tiles.png", tile_size, tile_size),
 		["monsters"] = engine.sprites.createTileset("game/assets/monsters.png", tile_size, tile_size),
+		["items"] = engine.sprites.createTileset("game/assets/items.png", tile_size, tile_size),
 	}
 end
 

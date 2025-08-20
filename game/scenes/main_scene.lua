@@ -1,6 +1,7 @@
 require("game.procgen.procgen")
 require("game.ui.render_bar")
 require("game.ui.message_log")
+require("game.ui.inventory_ui")
 require("game.ui.mouse_hover")
 require("game.mouse")
 MainScene = Scene:extend()
@@ -12,12 +13,21 @@ room_max_size = 12
 room_min_size = 4
 max_rooms = 20
 max_monsers_per_room = 2
+max_items_per_room = 2
 current_monsters = 0
 
 function MainScene:new()
 	MainScene.super.new(self)
 
-	self.map = generateDungeon(max_rooms, room_min_size, room_max_size, map_width, map_height, max_monsers_per_room)
+	self.map = generateDungeon(
+		max_rooms,
+		room_min_size,
+		room_max_size,
+		map_width,
+		map_height,
+		max_monsers_per_room,
+		max_items_per_room
+	)
 	self.player = self:addGameObject(
 		"Player",
 		self.map.player_start_x,
@@ -36,6 +46,9 @@ function MainScene:new()
 
 	message_log = MessageLog()
 	message_log:addMessage("Welcome to the Dungeon", { 0, 1, 0, 1 })
+
+	inventory_ui = InventoryUI()
+	inventory_ui.player = self.player
 
 	mouse = Mouse()
 	self.hovered_entities = {}
@@ -111,6 +124,7 @@ function MainScene:draw()
 
 	if self.hp_bar then self.hp_bar:draw() end
 	if message_log then message_log:draw() end
+	if inventory_ui then inventory_ui:draw() end
 	if self.mouse_hover then self.mouse_hover:draw() end
 
 	love.graphics.setCanvas()
@@ -149,6 +163,6 @@ end
 
 function MainScene:handleEnemyTurns()
 	for _, entity in ipairs(self.map.entities) do
-		entity.ai:perform(self.player.x, self.player.y)
+		if entity.ai then entity.ai:perform(self.player.x, self.player.y) end
 	end
 end
