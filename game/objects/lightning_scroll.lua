@@ -21,12 +21,12 @@ function LightningScroll:executeAtSelectedTile()
 
 	for _, entity in ipairs(entities) do
 		if entity.fighter_component then
-			entity.fighter_component:damage(self.damage)
 			local target_name = entity.name or "Entity"
 			message_log:addMessage(
 				target_name .. " was hit by lightning for " .. self.damage .. " damage!",
 				{ 1.0, 1.0, 0.0 }
 			)
+			entity.fighter_component:damage(self.damage)
 			hit_something = true
 		end
 	end

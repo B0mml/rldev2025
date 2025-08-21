@@ -31,6 +31,11 @@ function LoadEntityTemplates()
 		quad = tilesets["items"].quads[11 * 21 + 4],
 	}
 
+	local fireball_scroll_sprite = {
+		image = tilesets["items"].image,
+		quad = tilesets["items"].quads[11 * 21 + 3],
+	}
+
 	-- Scene, x, y, sprite, name, blocks_movement, gamemap, components, tags
 	entity_templates.goblin = Entity(nil, 0, 0, goblin_sprite, "Goblin", true, nil, {
 		ai = { type = HostileEnemyAI },
@@ -54,6 +59,10 @@ function LoadEntityTemplates()
 
 	entity_templates.confusion_scroll = Entity(nil, 0, 0, confusion_scroll_sprite, "Confusion Scroll", false, nil, {
 		consumable = { type = ConfusionScroll },
+	}, { "item" })
+
+	entity_templates.fireball_scroll = Entity(nil, 0, 0, fireball_scroll_sprite, "Fireball Scroll", false, nil, {
+		consumable = { type = FireballScroll },
 	}, { "item" })
 
 	return entity_templates

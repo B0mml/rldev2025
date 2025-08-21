@@ -68,9 +68,17 @@ function place_entities(room, dungeon, max_monsters, max_items)
 		y = love.math.random(room.y1 + 1, room.y2 - 1)
 
 		if not M.include(dungeon.entities, function(e) return e.x == x and e.y == y end) then
-			-- TODO: Both should be possible
-			-- entity_templates.lightning_scroll:spawn(dungeon, x, y)
-			entity_templates.confusion_scroll:spawn(dungeon, x, y)
+			local roll = love.math.random(1, 100)
+
+			if roll <= 40 then
+				entity_templates.health_potion:spawn(dungeon, x, y)
+			elseif roll <= 70 then
+				entity_templates.lightning_scroll:spawn(dungeon, x, y)
+			elseif roll <= 90 then
+				entity_templates.confusion_scroll:spawn(dungeon, x, y)
+			else
+				entity_templates.fireball_scroll:spawn(dungeon, x, y)
+			end
 		end
 	end
 end

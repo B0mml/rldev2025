@@ -13,7 +13,14 @@ end
 function InventoryUI:draw(camera)
 	if self.select_mode and camera then
 		local screen_x, screen_y = camera:cameraCoords(self.selected_x, self.selected_y)
-		love.graphics.circle("line", screen_x, screen_y, 10)
+
+		local half = math.floor(self.selected_radius / 2)
+
+		for dx = -half, half do
+			for dy = -half, half do
+				love.graphics.circle("line", screen_x + dx * tile_size, screen_y + dy * tile_size, 10)
+			end
+		end
 	end
 	if not self.visible then return end
 
@@ -149,7 +156,7 @@ function InventoryUI:useSelectedItem()
 end
 
 function InventoryUI:selectTile(radius, targeting_item)
-	local radius = radius or 1
+	self.selected_radius = radius or 1
 	self.select_mode = true
 	self.targeting_item = targeting_item
 	if self.player == nil then return end
