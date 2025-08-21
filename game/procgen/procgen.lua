@@ -69,7 +69,8 @@ function place_entities(room, dungeon, max_monsters, max_items)
 
 		if not M.include(dungeon.entities, function(e) return e.x == x and e.y == y end) then
 			-- TODO: Both should be possible
-			entity_templates.lightning_scroll:spawn(dungeon, x, y)
+			-- entity_templates.lightning_scroll:spawn(dungeon, x, y)
+			entity_templates.confusion_scroll:spawn(dungeon, x, y)
 		end
 	end
 end

@@ -26,6 +26,11 @@ function LoadEntityTemplates()
 		quad = tilesets["items"].quads[11 * 21 + 1],
 	}
 
+	local confusion_scroll_sprite = {
+		image = tilesets["items"].image,
+		quad = tilesets["items"].quads[11 * 21 + 4],
+	}
+
 	-- Scene, x, y, sprite, name, blocks_movement, gamemap, components, tags
 	entity_templates.goblin = Entity(nil, 0, 0, goblin_sprite, "Goblin", true, nil, {
 		ai = { type = HostileEnemyAI },
@@ -45,6 +50,10 @@ function LoadEntityTemplates()
 
 	entity_templates.lightning_scroll = Entity(nil, 0, 0, lightning_scroll_sprite, "Lightning Scroll", false, nil, {
 		consumable = { type = LightningScroll },
+	}, { "item" })
+
+	entity_templates.confusion_scroll = Entity(nil, 0, 0, confusion_scroll_sprite, "Confusion Scroll", false, nil, {
+		consumable = { type = ConfusionScroll },
 	}, { "item" })
 
 	return entity_templates

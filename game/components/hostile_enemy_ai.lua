@@ -1,3 +1,4 @@
+require("game.components.ai_component")
 HostileEnemyAI = AiComponent:extend()
 
 function HostileEnemyAI:new(entity) HostileEnemyAI.super.new(self, entity) end

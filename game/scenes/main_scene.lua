@@ -164,6 +164,22 @@ end
 
 function MainScene:handleEnemyTurns()
 	for _, entity in ipairs(self.map.entities) do
+		-- Handle confusion countdown
+		if entity.confusion_turns then
+			entity.confusion_turns = entity.confusion_turns - 1
+			if entity.confusion_turns <= 0 then
+				-- Restore original AI
+				entity.ai_type = entity.original_ai_type
+				entity.ai = entity.original_ai
+				entity.confusion_turns = nil
+				entity.original_ai_type = nil
+				entity.original_ai = nil
+				
+				local target_name = entity.name or "Entity"
+				message_log:addMessage(target_name .. " is no longer confused.", { 0.7, 0.7, 0.7 })
+			end
+		end
+		
 		if entity.ai then entity.ai:perform(self.player.x, self.player.y) end
 	end
 end
