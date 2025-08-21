@@ -49,6 +49,7 @@ function MainScene:new()
 
 	inventory_ui = InventoryUI()
 	inventory_ui.player = self.player
+	inventory_ui.map = self.map
 
 	mouse = Mouse()
 	self.hovered_entities = {}
@@ -124,7 +125,7 @@ function MainScene:draw()
 
 	if self.hp_bar then self.hp_bar:draw() end
 	if message_log then message_log:draw() end
-	if inventory_ui then inventory_ui:draw() end
+	if inventory_ui then inventory_ui:draw(self.camera) end
 	if self.mouse_hover then self.mouse_hover:draw() end
 
 	love.graphics.setCanvas()

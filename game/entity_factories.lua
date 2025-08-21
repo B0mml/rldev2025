@@ -21,6 +21,11 @@ function LoadEntityTemplates()
 		quad = tilesets["items"].quads[11 * 19 + 2],
 	}
 
+	local lightning_scroll_sprite = {
+		image = tilesets["items"].image,
+		quad = tilesets["items"].quads[11 * 21 + 1],
+	}
+
 	-- Scene, x, y, sprite, name, blocks_movement, gamemap, components, tags
 	entity_templates.goblin = Entity(nil, 0, 0, goblin_sprite, "Goblin", true, nil, {
 		ai = { type = HostileEnemyAI },
@@ -36,6 +41,10 @@ function LoadEntityTemplates()
 
 	entity_templates.health_potion = Entity(nil, 0, 0, health_potion_sprite, "Health Potion", false, nil, {
 		consumable = { type = HealthPotion },
+	}, { "item" })
+
+	entity_templates.lightning_scroll = Entity(nil, 0, 0, lightning_scroll_sprite, "Lightning Scroll", false, nil, {
+		consumable = { type = LightningScroll },
 	}, { "item" })
 
 	return entity_templates

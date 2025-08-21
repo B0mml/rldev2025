@@ -7,9 +7,14 @@ function InventoryUI:new()
 	self.visible = false
 	self.scroll_offset = 0
 	self.selected_index = 1
+	self.select_mode = false
 end
 
-function InventoryUI:draw()
+function InventoryUI:draw(camera)
+	if self.select_mode and camera then
+		local screen_x, screen_y = camera:cameraCoords(self.selected_x, self.selected_y)
+		love.graphics.circle("line", screen_x, screen_y, 10)
+	end
 	if not self.visible then return end
 
 	local bg_color = { 12 / 255, 19 / 255, 23 / 255, 0.9 }
@@ -95,6 +100,8 @@ end
 function InventoryUI:hide() self.visible = false end
 
 function InventoryUI:handleInput(key)
+	if self.select_mode then return self:handleSelectInput(key) end
+
 	if not self.visible then return false end
 
 	local inventory = self:getPlayerInventory()
@@ -139,4 +146,54 @@ function InventoryUI:useSelectedItem()
 	else
 		message_log:addMessage("Cannot use " .. (item.name or "this item"))
 	end
+end
+
+function InventoryUI:selectTile(radius, targeting_item)
+	local radius = radius or 1
+	self.select_mode = true
+	self.targeting_item = targeting_item
+	if self.player == nil then return end
+	self.selected_x = self.player.vx + tile_size / 2
+	self.selected_y = self.player.vy + tile_size / 2
+
+	self:hide()
+end
+
+function InventoryUI:handleSelectInput(key)
+	if not self.select_mode then return false end
+
+	local new_x, new_y = self.selected_x, self.selected_y
+
+	if key == "up" then
+		new_y = self.selected_y - tile_size
+	elseif key == "down" then
+		new_y = self.selected_y + tile_size
+	elseif key == "left" then
+		new_x = self.selected_x - tile_size
+	elseif key == "right" then
+		new_x = self.selected_x + tile_size
+	elseif key == "return" or key == "kpenter" then
+		if self.targeting_item and self.targeting_item.executeAtSelectedTile then
+			self.targeting_item:executeAtSelectedTile()
+		end
+		self.select_mode = false
+		self.targeting_item = nil
+		self:show()
+		return true
+	elseif key == "i" or key == "escape" then
+		self.select_mode = false
+		self:show()
+		return true
+	end
+
+	if self.map then
+		local tile_x = math.floor(new_x / tile_size)
+		local tile_y = math.floor(new_y / tile_size)
+
+		if self.map:inbounds(tile_x, tile_y) and self.map.visible[tile_x] and self.map.visible[tile_x][tile_y] then
+			self.selected_x, self.selected_y = new_x, new_y
+		end
+	end
+
+	return true
 end

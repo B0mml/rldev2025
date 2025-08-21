@@ -68,7 +68,8 @@ function place_entities(room, dungeon, max_monsters, max_items)
 		y = love.math.random(room.y1 + 1, room.y2 - 1)
 
 		if not M.include(dungeon.entities, function(e) return e.x == x and e.y == y end) then
-			entity_templates.health_potion:spawn(dungeon, x, y)
+			-- TODO: Both should be possible
+			entity_templates.lightning_scroll:spawn(dungeon, x, y)
 		end
 	end
 end

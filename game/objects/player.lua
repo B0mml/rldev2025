@@ -33,13 +33,21 @@ function Player:handleMovementInput()
 	if self.frozen then return end
 	if self.movement_tween then return end
 
-	if inventory_ui and inventory_ui.visible then
+	if inventory_ui and (inventory_ui.visible or inventory_ui.select_mode) then
 		if input:pressed("up") then
 			inventory_ui:handleInput("up")
 			return
 		end
 		if input:pressed("down") then
 			inventory_ui:handleInput("down")
+			return
+		end
+		if input:pressed("left") then
+			inventory_ui:handleInput("left")
+			return
+		end
+		if input:pressed("right") then
+			inventory_ui:handleInput("right")
 			return
 		end
 		if input:pressed("action") then
