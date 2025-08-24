@@ -4,6 +4,8 @@ require("game.ui.message_log")
 require("game.ui.inventory_ui")
 require("game.ui.mouse_hover")
 require("game.ui.dungeon_level_display")
+require("game.ui.level_up_ui")
+require("game.ui.player_stats_ui")
 require("game.mouse")
 MainScene = Scene:extend()
 
@@ -46,7 +48,8 @@ function MainScene:new()
 	})
 
 	self.dungeon_level_display = self:addGameObject("DungeonLevelDisplay", 10, 35, {
-		floor_number = self.map.floor_number or 1
+		floor_number = self.map.floor_number or 1,
+		player = self.player
 	})
 
 	message_log = MessageLog()
@@ -55,6 +58,13 @@ function MainScene:new()
 	inventory_ui = InventoryUI()
 	inventory_ui.player = self.player
 	inventory_ui.map = self.map
+
+	level_up_ui = LevelUpUI()
+	level_up_ui.player = self.player
+
+	self.player_stats_ui = PlayerStatsUI(nil, gw - 210, 10, {
+		player = self.player
+	})
 
 	mouse = Mouse()
 	self.hovered_entities = {}
@@ -73,6 +83,9 @@ function MainScene:update(dt)
 	self.map:update()
 
 	if self.hp_bar and self.player.fighter_component then
+		if self.hp_bar.max ~= self.player.fighter_component.max_hp then
+			self.hp_bar.max = self.player.fighter_component.max_hp
+		end
 		self.hp_bar:ChangeValue(self.player.fighter_component.current_hp)
 	end
 
@@ -130,8 +143,10 @@ function MainScene:draw()
 
 	if self.hp_bar then self.hp_bar:draw() end
 	if self.dungeon_level_display then self.dungeon_level_display:draw() end
+	if self.player_stats_ui then self.player_stats_ui:draw() end
 	if message_log then message_log:draw() end
 	if inventory_ui then inventory_ui:draw(self.camera) end
+	if level_up_ui then level_up_ui:draw() end
 	if self.mouse_hover then self.mouse_hover:draw() end
 
 	love.graphics.setCanvas()

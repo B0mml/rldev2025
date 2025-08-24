@@ -3,6 +3,7 @@ Player = GameObject:extend()
 function Player:new(scene, x, y, opts)
 	Player.super.new(self, scene, x, y, opts)
 
+	self.name = "Player"
 	self.fighter_component = FighterComponent(self, 10, 1, 0)
 	self.inventory_component = InventoryComponent(10)
 	self.view_radius = self.view_radius or 8
@@ -60,6 +61,22 @@ function Player:handleMovementInput()
 		end
 		if input:pressed("inventory") then
 			inventory_ui:handleInput("i")
+			return
+		end
+		return
+	end
+
+	if level_up_ui and level_up_ui.visible then
+		if input:pressed("up") then
+			level_up_ui:handleInput("up")
+			return
+		end
+		if input:pressed("down") then
+			level_up_ui:handleInput("down")
+			return
+		end
+		if input:pressed("action") then
+			level_up_ui:handleInput("return")
 			return
 		end
 		return

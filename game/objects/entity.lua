@@ -24,7 +24,7 @@ function Entity:new(scene, x, y, sprite, name, blocks_movement, gamemap, compone
 				if self.ai_type then self.ai = self.ai_type(self) end
 			elseif component_name == "fighter" then
 				self.fighter_component =
-					FighterComponent(self, component_data.max_hp, component_data.attack, component_data.defense)
+					FighterComponent(self, component_data.max_hp, component_data.attack, component_data.defense, component_data.xp_given)
 			elseif component_name == "consumable" then
 				self.consumable = component_data.type(self)
 			else
@@ -52,6 +52,7 @@ function Entity:spawn(gamemap, x, y)
 			max_hp = self.fighter_component.max_hp,
 			attack = self.fighter_component.attack,
 			defense = self.fighter_component.defense,
+			xp_given = self.fighter_component.xp_given,
 		}
 	end
 
@@ -80,6 +81,13 @@ end
 function Entity:die()
 	message_log:addMessage(self.name .. " Died! ", hp_bar_fg)
 	self.dead = true
+	
+	if self.fighter_component and self.fighter_component.xp_given and self.fighter_component.xp_given > 0 then
+		if self.gamemap and self.gamemap.player and self.gamemap.player.fighter_component then
+			self.gamemap.player.fighter_component:add_xp(self.fighter_component.xp_given)
+		end
+	end
+	
 	local corpse = entity_templates.corpse:spawn(self.gamemap, self.x, self.y)
 	corpse.name = "Remains of " .. self.name
 end

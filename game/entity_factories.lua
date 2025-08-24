@@ -39,12 +39,12 @@ function LoadEntityTemplates()
 	-- Scene, x, y, sprite, name, blocks_movement, gamemap, components, tags
 	entity_templates.goblin = Entity(nil, 0, 0, goblin_sprite, "Goblin", true, nil, {
 		ai = { type = HostileEnemyAI },
-		fighter = { max_hp = 3, attack = 1, defense = 0 },
+		fighter = { max_hp = 3, attack = 1, defense = 0, xp_given = 35 },
 	}, {})
 
 	entity_templates.ogre = Entity(nil, 0, 0, ogre_sprite, "Ogre", true, nil, {
 		ai = { type = HostileEnemyAI },
-		fighter = { max_hp = 5, attack = 1, defense = 0 },
+		fighter = { max_hp = 5, attack = 1, defense = 0, xp_given = 100 },
 	}, {})
 
 	entity_templates.corpse = Entity(nil, 0, 0, corpse_sprite, "Corpse", false, nil, {}, {})
