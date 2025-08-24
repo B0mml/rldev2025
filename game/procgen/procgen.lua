@@ -127,6 +127,7 @@ function generateDungeon(
 	dungeon = GameMap(map_width, map_height)
 
 	rooms = {}
+	local center_of_last_room_x, center_of_last_room_y
 
 	for i = 1, max_rooms do
 		room_width = love.math.random(room_min_size, room_max_size)
@@ -150,8 +151,15 @@ function generateDungeon(
 		end
 		place_entities(new_room, dungeon, max_monsters_per_room, max_items_per_room)
 
+		center_of_last_room_x, center_of_last_room_y = new_room:center()
+
 		table.insert(rooms, new_room)
 		::continue::
+	end
+
+	if center_of_last_room_x and center_of_last_room_y then
+		dungeon.tiles[center_of_last_room_y][center_of_last_room_x] = tile_types.stairs
+		dungeon.downstairs_location = { x = center_of_last_room_x, y = center_of_last_room_y }
 	end
 
 	return dungeon

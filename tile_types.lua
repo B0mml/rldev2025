@@ -19,6 +19,7 @@ tile_types = {
 	floor_alt = tile(true, true, "floor_alt"),
 	wall = tile(false, false, "wall"),
 	wall_front = tile(false, false, "wall_front"),
+	stairs = tile(true, true, "stairs"),
 }
 
 tile_sprite_definition = {
@@ -27,4 +28,5 @@ tile_sprite_definition = {
 	floor_alt = { tileset = "tiles", quad_id = 17 * 12 + 1 },
 	wall = { tileset = "tiles", quad_id = 17 * 2 + 1 },
 	wall_front = { tileset = "tiles", quad_id = 17 * 2 + 2 },
+	stairs = { tileset = "tiles", quad_id = 17 * 16 + 8 },
 }
