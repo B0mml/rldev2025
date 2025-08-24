@@ -3,6 +3,7 @@ require("game.ui.render_bar")
 require("game.ui.message_log")
 require("game.ui.inventory_ui")
 require("game.ui.mouse_hover")
+require("game.ui.dungeon_level_display")
 require("game.mouse")
 MainScene = Scene:extend()
 
@@ -42,6 +43,10 @@ function MainScene:new()
 		min = 0,
 		max = self.player.fighter_component.max_hp,
 		current = self.player.fighter_component.current_hp,
+	})
+
+	self.dungeon_level_display = self:addGameObject("DungeonLevelDisplay", 10, 35, {
+		floor_number = self.map.floor_number or 1
 	})
 
 	message_log = MessageLog()
@@ -124,6 +129,7 @@ function MainScene:draw()
 	self.camera:detach()
 
 	if self.hp_bar then self.hp_bar:draw() end
+	if self.dungeon_level_display then self.dungeon_level_display:draw() end
 	if message_log then message_log:draw() end
 	if inventory_ui then inventory_ui:draw(self.camera) end
 	if self.mouse_hover then self.mouse_hover:draw() end
@@ -181,5 +187,34 @@ function MainScene:handleEnemyTurns()
 		end
 		
 		if entity.ai then entity.ai:perform(self.player.x, self.player.y) end
+	end
+end
+
+function MainScene:generateNextFloor()
+	local next_floor = (self.map.floor_number or 1) + 1
+	current_monsters = 0
+	
+	self.map = generateFloor(
+		next_floor,
+		max_rooms,
+		room_min_size,
+		room_max_size,
+		map_width,
+		map_height,
+		max_monsers_per_room,
+		max_items_per_room
+	)
+	
+	self.player.x = self.map.player_start_x
+	self.player.y = self.map.player_start_y
+	self.player.vx = self.player.x * tile_size
+	self.player.vy = self.player.y * tile_size
+	self.player.map = self.map
+	self.map:addPlayer(self.player)
+	
+	inventory_ui.map = self.map
+	
+	if self.dungeon_level_display then
+		self.dungeon_level_display:updateFloor(next_floor)
 	end
 end

@@ -121,6 +121,11 @@ function Player:attemptMove(dx, dy)
 		function() self.movement_tween = nil end
 	)
 
+	if self.map.tiles[self.y][self.x] == tile_types.stairs then
+		self:takeStairs()
+		return
+	end
+
 	self.scene:handleEnemyTurns()
 end
 
@@ -187,4 +192,9 @@ function Player:pickupItems()
 			message_log:addMessage("Picked up " .. item_name)
 		end
 	end
+end
+
+function Player:takeStairs()
+	message_log:addMessage("You descend to floor " .. (self.map.floor_number + 1) .. "...")
+	self.scene:generateNextFloor()
 end

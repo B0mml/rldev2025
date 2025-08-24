@@ -115,7 +115,8 @@ local function tunnelBetween(start_x, start_y, end_x, end_y)
 	end)
 end
 
-function generateDungeon(
+function generateFloor(
+	floor_number,
 	max_rooms,
 	room_min_size,
 	room_max_size,
@@ -161,6 +162,29 @@ function generateDungeon(
 		dungeon.tiles[center_of_last_room_y][center_of_last_room_x] = tile_types.stairs
 		dungeon.downstairs_location = { x = center_of_last_room_x, y = center_of_last_room_y }
 	end
+	
+	dungeon.floor_number = floor_number
 
 	return dungeon
+end
+
+function generateDungeon(
+	max_rooms,
+	room_min_size,
+	room_max_size,
+	map_width,
+	map_height,
+	max_monsters_per_room,
+	max_items_per_room
+)
+	return generateFloor(
+		1,
+		max_rooms,
+		room_min_size,
+		room_max_size,
+		map_width,
+		map_height,
+		max_monsters_per_room,
+		max_items_per_room
+	)
 end
